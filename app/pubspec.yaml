@@ -1,0 +1,19 @@
+name: app
+description: "template for Flutter and Dart Docker projects"
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: '>=3.4.0-212.0.dev <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true

@@ -32,7 +32,7 @@
         "git.authorName": "Azmi SAHIN",
         "git.authorEmail": "azmisahin@outlook.com",
         "git.defaultCloneDirectory": "${workspaceFolder}",
-        "git.autofetch": true
+        "git.autofetch": true,
       },
       "extensions": [
         "hediet.vscode-drawio",
@@ -40,7 +40,8 @@
         "eamodio.gitlens",
         "esbenp.prettier-vscode",
         "mikestead.dotenv",
-        "Dart-Code.flutter"
+        "Dart-Code.flutter",
+        "Dart-Code.dart-code"
       ]
     }
   },
