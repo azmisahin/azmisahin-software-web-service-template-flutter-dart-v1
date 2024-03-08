@@ -39,7 +39,8 @@
         "ms-azuretools.vscode-docker",
         "eamodio.gitlens",
         "esbenp.prettier-vscode",
-        "mikestead.dotenv"
+        "mikestead.dotenv",
+        "Dart-Code.flutter"
       ]
     }
   },
