@@ -1,5 +1,5 @@
 # Introduction
-This repository provides a standardized template for Docker projects, compatible with agile processes.
+This repository provides a standardized template for Flutter and Dart Docker projects that is compatible with agile processes.
 
 🔖 Version: 0.2.1
 

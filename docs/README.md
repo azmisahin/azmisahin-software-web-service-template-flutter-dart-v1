@@ -43,11 +43,11 @@
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/azmisahin/azmisahin-software-repository-template-docker-v2.git
+   git clone https://github.com/azmisahin/azmisahin-software-web-service-template-flutter-dart-v1
    ```
 
 2. Navigate to the project directory:
 
    ```bash
-   cd azmisahin-software-repository-template-docker-v2
+   cd azmisahin-software-web-service-template-flutter-dart-v1
    ```
