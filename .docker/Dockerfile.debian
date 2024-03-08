@@ -89,15 +89,36 @@ EXPOSE $TCP_PORT
 # Development stage
 FROM build AS development
 
-# Install base packages
+# Install base packages for flutter
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     build-essential \
+    ca-certificates \
     git \
     curl \
     vim \
     nano \
+    clang \
+    cmake \
+    git \
+    ninja-build \
+    pkg-config \
+    libgtk-3-dev \
+    liblzma-dev \
+    libstdc++-12-dev \
+    unzip \
     && rm -rf /var/lib/apt/lists/*
+
+# Flutter install
+RUN git clone https://github.com/flutter/flutter.git /flutter
+
+# Flutter PATH
+ENV PATH="/flutter/bin:${PATH}"
+
+# Dart PATH
+ENV PATH="/flutter/bin/cache/dart-sdk/bin:${PATH}"
+
+RUN flutter
 
 # Copy only necessary files for development
 COPY . .
