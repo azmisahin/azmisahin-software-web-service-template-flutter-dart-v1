@@ -33,10 +33,23 @@ class SocketService extends ChangeNotifier {
     socket.onConnect((_) {
       status = "connected!";
       logs.add("status: $status");
-      Timer.periodic(Duration(seconds: durationTime), (timer) {
-        var endpoint = '/api/v1/time';
-        logs.add("sending: $endpoint");
-        socket.emit('get', endpoint);
+
+      Timer? timer;
+
+      void startTimer() {
+        timer = Timer.periodic(Duration(seconds: durationTime), (timer) {
+          var endpoint = '/api/v1/time';
+          logs.add("sending: $endpoint");
+          socket.emit('get', endpoint);
+        });
+      }
+
+      startTimer(); //
+
+      _durationController.stream.listen((newDurationTime) {
+        timer?.cancel();
+        durationTime = newDurationTime;
+        startTimer();
       });
     });
 

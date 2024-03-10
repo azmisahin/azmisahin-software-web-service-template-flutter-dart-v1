@@ -48,6 +48,10 @@ class _MyHomePageState extends State<MyHomePage> {
             icon: Icon(Icons.remove),
             onPressed: decreaseDuration,
           ),
+          Text(
+            '$durationTime', // Duration göster
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
           IconButton(
             icon: Icon(Icons.add),
             onPressed: increaseDuration,
