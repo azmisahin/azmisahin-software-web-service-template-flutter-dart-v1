@@ -19,13 +19,12 @@ class SocketService extends ChangeNotifier {
 
   int durationTime = 5;
 
-  SocketService() {
+  SocketService(String serverAddress) {
     logs.add("status: $status");
-    initSocket();
+    initSocket(serverAddress);
   }
 
-  void initSocket() {
-    const serverAddress = 'http://127.0.0.1:8082';
+  void initSocket(serverAddress) {
     socket = IO.io(serverAddress, <String, dynamic>{
       'transports': ['websocket']
     });
@@ -73,7 +72,7 @@ class SocketService extends ChangeNotifier {
     });
 
     socket.onError((error) {
-      logs.add("Disconnect: $error");
+      logs.add("error:");
       _logsController.add(logs.toList());
       _notifyLogsUpdateController.add(null);
     });

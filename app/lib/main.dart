@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
 import 'socket_service.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+Future main() async {
+  // To load the .env file contents into dotenv.
+  // NOTE: fileName defaults to .env and can be omitted in this case.
+  // Ensure that the filename corresponds to the path in step 1 and 2.
+  await dotenv.load();
+  //...runapp
   runApp(MyApp());
 }
+// Load configuration at runtime
+final serverAddress = dotenv.env['REMOTE_SERVICE_ADDRESS'] ?? "127.0.0.1:8080";
 
 class MyApp extends StatelessWidget {
   @override
@@ -20,7 +28,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final SocketService socketService = SocketService();
+  final SocketService socketService = SocketService(serverAddress!);
   int durationTime = 5;
   final ScrollController _menuScrollController = ScrollController();
   final ScrollController _bodyScrollController = ScrollController();
@@ -50,7 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
             onPressed: decreaseDuration,
           ),
           Text(
-            '$durationTime', 
+            '$durationTime',
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           IconButton(
@@ -119,7 +127,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    socketService.initSocket();
+    socketService.initSocket(serverAddress);
   }
 
   @override
