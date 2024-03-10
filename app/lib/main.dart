@@ -58,48 +58,42 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-              ),
-              child: StreamBuilder<List<String>>(
-                stream: socketService.logsStream,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    WidgetsBinding.instance?.addPostFrameCallback((_) {
-                      // Scrool
-                      _scrollController.animateTo(
-                        _scrollController.position.maxScrollExtent,
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeOut,
-                      );
-                    });
-                    return ListView.builder(
-                      reverse: true,
-                      controller: _scrollController,
-                      itemCount: snapshot.data!.length,
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                          title: Text(
-                            snapshot.data![index],
-                            style: TextStyle(fontSize: 16),
-                          ),
-                        );
-                      },
-                    );
-                  } else {
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
+      drawer: Drawer(
+        child: StreamBuilder<List<String>>(
+          stream: socketService.logsStream,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              WidgetsBinding.instance?.addPostFrameCallback((_) {
+                // Scrool
+                _scrollController.animateTo(
+                  _scrollController.position.maxScrollExtent,
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeOut,
+                );
+              });
+              return ListView.builder(
+                reverse: true,
+                controller: _scrollController,
+                itemCount: snapshot.data!.length,
+                itemBuilder: (context, index) {
+                  return Container(
+                    color: index % 2 == 0 ? Colors.grey[200] : Colors.white,
+                    child: ListTile(
+                      title: Text(
+                        snapshot.data![index],
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ),
+                  );
                 },
-              ),
-            ),
-          ),
-        ],
+              );
+            } else {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          },
+        ),
       ),
     );
   }
