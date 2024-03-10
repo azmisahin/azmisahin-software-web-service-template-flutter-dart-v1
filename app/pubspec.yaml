@@ -1,6 +1,6 @@
 name: app
 description: "template for Flutter and Dart Docker projects"
-publish_to: "none"
+publish_to: "Application"
 version: 0.1.0
 
 environment:
@@ -9,6 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  provider: ^6.1.2
   socket_io_client: ^2.0.0
 
 dev_dependencies:

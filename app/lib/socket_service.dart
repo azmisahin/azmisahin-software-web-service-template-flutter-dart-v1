@@ -5,49 +5,90 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 class SocketService extends ChangeNotifier {
   late IO.Socket socket;
   List<String> logs = [];
-
   String status = "Connecting...";
 
+  final _logsController = StreamController<List<String>>.broadcast();
+  Stream<List<String>> get logsStream => _logsController.stream;
+
+  final _durationController = StreamController<int>.broadcast();
+  Stream<int> get durationStream => _durationController.stream;
+
+  // Yeni eklenen StreamController
+  final _notifyLogsUpdateController = StreamController<void>.broadcast();
+  Stream<void> get notifyLogsUpdateStream => _notifyLogsUpdateController.stream;
+
+  int durationTime = 5;
+
   SocketService() {
+    logs.add("status: $status");
     initSocket();
   }
 
   void initSocket() {
-    const serverAddress = 'http://127.0.0.1:8080';
+    const serverAddress = 'http://127.0.0.1:8082';
     socket = IO.io(serverAddress, <String, dynamic>{
       'transports': ['websocket']
     });
 
     socket.onConnect((_) {
-      status = "Client connected!";
-      Timer.periodic(const Duration(seconds: 5), (timer) {
+      status = "connected!";
+      logs.add("status: $status");
+      Timer.periodic(Duration(seconds: durationTime), (timer) {
         var endpoint = '/api/v1/time';
+        logs.add("sending: $endpoint");
         socket.emit('get', endpoint);
       });
     });
 
     socket.on('/api/v1/time', (data) {
       String currentTime = data["current_time"];
-      logs.add(currentTime);
-      notifyListeners();
+      logs.add("/api/v1/time: $currentTime");
+      _logsController.add(logs.toList());
+      _notifyLogsUpdateController.add(null);
     });
 
     socket.on('message', (data) {
-      notifyListeners();
+      logs.add("message: $data");
+      _logsController.add(logs.toList());
+      _notifyLogsUpdateController.add(null);
     });
 
     socket.onDisconnect((_) {
-      notifyListeners();
+      logs.add("Disconnect: ");
+      _logsController.add(logs.toList());
+      _notifyLogsUpdateController.add(null);
     });
 
     socket.onError((error) {
-      notifyListeners();
+      logs.add("Disconnect: $error");
+      _logsController.add(logs.toList());
+      _notifyLogsUpdateController.add(null);
     });
+  }
+
+  void decreaseDuration() {
+    durationTime = durationTime > 1 ? durationTime - 1 : 1;
+    _durationController.add(durationTime);
+    _notifyLogsUpdateController.add(null);
+  }
+
+  void increaseDuration() {
+    durationTime += 1;
+    _durationController.add(durationTime);
+    _notifyLogsUpdateController.add(null);
+  }
+
+  //
+  void notifyLogsUpdate() {
+    _notifyLogsUpdateController.add(null);
   }
 
   @override
   void dispose() {
     super.dispose();
     socket.dispose();
+    _logsController.close();
+    _durationController.close();
+    _notifyLogsUpdateController.close();
   }
 }
