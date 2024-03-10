@@ -22,7 +22,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final SocketService socketService = SocketService();
   int durationTime = 5;
-  final ScrollController _scrollController = ScrollController();
+  final ScrollController _menuScrollController = ScrollController();
+  final ScrollController _bodyScrollController = ScrollController();
 
   void decreaseDuration() {
     setState(() {
@@ -49,7 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
             onPressed: decreaseDuration,
           ),
           Text(
-            '$durationTime', // Duration göster
+            '$durationTime', 
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           IconButton(
@@ -64,16 +65,15 @@ class _MyHomePageState extends State<MyHomePage> {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               WidgetsBinding.instance?.addPostFrameCallback((_) {
-                // Scrool
-                _scrollController.animateTo(
-                  _scrollController.position.maxScrollExtent,
+                // Scroll
+                _menuScrollController.animateTo(
+                  _menuScrollController.position.maxScrollExtent,
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeOut,
                 );
               });
               return ListView.builder(
-                reverse: true,
-                controller: _scrollController,
+                controller: _menuScrollController,
                 itemCount: snapshot.data!.length,
                 itemBuilder: (context, index) {
                   return Container(
@@ -95,6 +95,24 @@ class _MyHomePageState extends State<MyHomePage> {
           },
         ),
       ),
+      body: StreamBuilder<List<String>>(
+        stream: socketService.logsStream,
+        builder: (context, snapshot) {
+          if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+            final lastLog = snapshot.data!.last;
+            return Center(
+              child: Text(
+                lastLog,
+                style: TextStyle(fontSize: 20),
+              ),
+            );
+          } else {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        },
+      ),
     );
   }
 
@@ -107,6 +125,8 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void dispose() {
     socketService.dispose();
+    _menuScrollController.dispose();
+    _bodyScrollController.dispose();
     super.dispose();
   }
 }
