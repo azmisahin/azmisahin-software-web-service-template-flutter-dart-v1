@@ -44,6 +44,27 @@ echo SWICH_TRACKING_REPORT=$SWICH_TRACKING_REPORT
 
 # Application
 
-sleep infinity
+# Create Nginx configuration file
+cat <<EOL > nginx.conf
+events {
+    worker_connections 1024;
+}
 
-/bin/sh
+http {
+    server {
+        listen $HTTP_PORT;
+        server_name localhost;
+
+        location / {
+            root /usr/share/nginx/html;
+            index index.html;
+        }
+    }
+}
+EOL
+
+# Start Nginx with the created configuration file
+nginx -c $(pwd)/nginx.conf -g 'daemon off;'
+
+
+# /bin/sh

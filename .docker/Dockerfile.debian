@@ -150,13 +150,32 @@ COPY . .
 
 
 # Test stage
-FROM development AS test
+FROM development AS test-build
 
 # Copy only necessary files for test
 # In the previous stage, we had copied everything.
 
 # install tests dependencies
 
+
+# switch to application folder
+WORKDIR $PROJECT_FOLDER/app
+
+# Install dependencies if necessary
+RUN flutter pub get
+
+# Compile the application
+RUN flutter build web
+
+# Serve compiled application using Nginx
+FROM nginx:alpine as test
+
+# ENV ile tanımlanan değişkeni kullan
+RUN echo "Test stage - PROJECT_FOLDER: $PROJECT_FOLDER"
+
+# Copy compiled files to server
+COPY --from=test-build /workspaces/template/.docker/test/command.sh /.docker/test/command.sh
+COPY --from=test-build /workspaces/template/app/build/web /usr/share/nginx/html
 
 
 # Run tests
@@ -165,9 +184,20 @@ FROM development AS test
 
 
 # Production stage
-FROM test AS production
+FROM test-build AS production-build
+
+
 
 # install production dependencies
+
+
+# Serve compiled application using Nginx
+FROM nginx:alpine as production
+
+
+# Copy compiled files to server
+COPY --from=production-build /workspaces/template/.docker/command.sh /.docker/command.sh
+COPY --from=production-build /workspaces/template/app/build/web /usr/share/nginx/html
 
 # Application run
 # It allows the application to start automatically.
